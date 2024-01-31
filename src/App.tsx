@@ -8,14 +8,13 @@ import './globals.css';
 
 const App = () => {
   return (
-    <main>
+    <main className='flex h-screen'>
         <Routes>
             {/*public route*/}
             <Route element={<AuthLayout/>}>
                 <Route path='/sign-in' element={<SigninForm/>}/>
                 <Route path='/sign-up' element={<SignupForm/>}/>
             </Route>
-            
             {/*private route*/}
             <Route element={<RootLayout/>}>
                 <Route index element={<Home/>}/>
