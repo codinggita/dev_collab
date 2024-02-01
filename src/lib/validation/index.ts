@@ -13,3 +13,10 @@ export const SigninValidation = z.object({
     email: z.string().email(),
     password: z.string().min(8, {message: 'Password must be at least 8 characters'}),
 })
+
+//Basically it is the schema or the structure of the sign-in form
+export const FormValidation = z.object({
+    projectTitle: z.string().email(),
+    projectContent: z.string().min(10).max(2250),
+    file: z.custom<File[]>(),
+})
