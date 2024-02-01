@@ -5,6 +5,9 @@ import AuthLayout from './_auth/AuthLayout';
 import RootLayout from './_root/RootLayout';
 import { Home, Explore } from './_root/pages';
 import './globals.css';
+import Saved from './_root/pages/Saved';
+import AllUsers from './_root/pages/AllUsers';
+import CreateProject from './_root/pages/CreateProject';
 
 const App = () => {
   return (
@@ -19,6 +22,9 @@ const App = () => {
             <Route element={<RootLayout/>}>
                 <Route index element={<Home/>}/>
                 <Route path="/explore" element={<Explore />} />
+                <Route path="/saved" element={<Saved />} />
+                <Route path="/all-users" element={<AllUsers />} />
+                <Route path="/create-project" element={<CreateProject />} />
             </Route>            
         </Routes>
     </main>
