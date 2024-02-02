@@ -16,7 +16,8 @@ export const SigninValidation = z.object({
 
 //Basically it is the schema or the structure of the sign-in form
 export const FormValidation = z.object({
-    projectTitle: z.string().email(),
-    projectContent: z.string().min(10).max(2250),
+    projectTitle: z.string().min(8, {message: 'Title must be at least 8 characters'}),
+    projectContent: z.string().min(20, {message: 'Content must be at least 20 characters'}).max(2250),
     file: z.custom<File[]>(),
+    scope: z.string().min(8).max(20),
 })
