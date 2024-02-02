@@ -7,7 +7,9 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "../ui/textarea"
 import { FormValidation } from "@/lib/validation"
 import FileUploader from "../shared/FileUploader"
-
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "../ui/label"
+import { Radio } from "lucide-react"
 
 const PostForm = () => {
     // Defining the form
@@ -16,6 +18,7 @@ const PostForm = () => {
         defaultValues: {
             projectTitle: "",
             projectContent: "",
+            scope: ""
         },
     })
     // Defining the submit handler
@@ -62,6 +65,19 @@ const PostForm = () => {
                     fieldChange={field.onChange}
                     mediaUrl=""
                 />
+              </FormControl>
+              <FormMessage className="shad-form_message" />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="scope"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="shad-form_label">Select Visibility</FormLabel>
+              <FormControl>
+                <Input type="text" className="shad-input" {...field}/>
               </FormControl>
               <FormMessage className="shad-form_message" />
             </FormItem>
