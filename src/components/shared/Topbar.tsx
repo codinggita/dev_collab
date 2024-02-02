@@ -10,8 +10,8 @@ const Topbar = () => {
           <img
             src="/assets/images/logon.png"
             alt="logo"
-            width={130}
-            height={325}
+            width={30}
+            height={50}
           />
         </Link>
         <div className="flex gap-4">
