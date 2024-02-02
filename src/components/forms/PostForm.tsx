@@ -7,9 +7,6 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "../ui/textarea"
 import { FormValidation } from "@/lib/validation"
 import FileUploader from "../shared/FileUploader"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Label } from "../ui/label"
-import { Radio } from "lucide-react"
 
 const PostForm = () => {
     // Defining the form
