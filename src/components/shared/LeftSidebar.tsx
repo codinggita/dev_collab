@@ -8,12 +8,12 @@ const LeftSidebar = () => {
   return (
     <nav className="leftsidebar">
       <div className="flex flex-col gap-11">
-        <Link to="/" className="flex gap-3 items-center ml-10">
+        <Link to="/" className="flex gap-3 items-center">
             <img
-              src="/assets/images/logon.png"
+              src="/assets/images/logoNew.png"
               alt="logo"
-              width={30}
-              height={50}
+              width={220}
+              height={130}
             />
         </Link>
 
