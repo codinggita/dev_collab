@@ -14,10 +14,20 @@ export const SigninValidation = z.object({
     password: z.string().min(8, {message: 'Password must be at least 8 characters'}),
 })
 
-//Basically it is the schema or the structure of the sign-in form
-export const FormValidation = z.object({
-    projectTitle: z.string().min(8, {message: 'Title must be at least 8 characters'}),
-    projectContent: z.string().min(20, {message: 'Content must be at least 20 characters'}).max(2250),
+// Post Schema
+export const PostValidation = z.object({
+    caption: z.string().min(5).max(2200),
     file: z.custom<File[]>(),
-    scope: z.string().min(8).max(20),
+    location: z.string().min(5).max(100),
+    tags: z.string()
 })
+
+
+// Profile Validation
+export const ProfileValidation = z.object({
+    file: z.custom<File[]>(),
+    name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+    username: z.string().min(2, { message: "Name must be at least 2 characters." }),
+    email: z.string().email(),
+    bio: z.string(),
+});
