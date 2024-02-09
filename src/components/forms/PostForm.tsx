@@ -1,49 +1,76 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "../ui/textarea"
-import { FormValidation } from "@/lib/validation"
 import FileUploader from "../shared/FileUploader"
+import { PostValidation } from "@/lib/validation"
+import { Models } from "appwrite"
+import { useUserContext } from "@/context/AuthContext"
+import { useToast } from "../ui/use-toast"
+import { useCreatePost, useUpdatePost } from "@/lib/react-query/queriesAndMutations"
 
-const PostForm = () => {
+
+type PostFormProps = {
+    post?: Models.Document;
+    action: 'Create' | 'Update';
+}
+
+const PostForm = ({ post, action }: PostFormProps) => {
+    const {mutateAsync: createPost, isPending: isLoadingCreate} = useCreatePost();
+    const {mutateAsync: updatePost, isPending: isLoadingUpdate} = useUpdatePost();
+    const { user } = useUserContext();
+    const navigate = useNavigate();
+    const { toast } = useToast();
     // Defining the form
-    const form = useForm<z.infer<typeof FormValidation>>({
-        resolver: zodResolver(FormValidation),
+    const form = useForm<z.infer<typeof PostValidation>>({
+        resolver: zodResolver(PostValidation),
         defaultValues: {
-            projectTitle: "",
-            projectContent: "",
-            scope: ""
+            caption: post ? post?.caption: "",
+            file: [],
+            location: post? post?.location: "",
+            tags: post? post.tags.join(","): "",
         },
     })
     // Defining the submit handler
-    async function onSubmit(values: z.infer<typeof FormValidation>) {
-        console.log(values);
+    async function onSubmit(values: z.infer<typeof PostValidation>) {
+        if(post && action === 'Update'){
+          const updatedPost =  await updatePost({
+            ...values,
+            postId: post.$id,
+            imageId: post?.imageId,
+            imageUrl: post?.imageUrl,
+          })
+          if(!updatedPost){
+            toast({title: "Please try again"})
+          }
+
+          return navigate(`/posts/${post.$id}`);
+        }
+        const newPost = await createPost({
+            ...values,
+            userId: user.id,
+        });
+        if(!newPost){
+            toast({
+                title: 'Please try again',
+            })
+        }
+        // If successfully created the post
+        navigate('/');
     }
     return (
         <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-9 w-full max-w-5xl">
         <FormField
           control={form.control}
-          name="projectTitle"
+          name="caption"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="shad-form_label">Project Title</FormLabel>
-              <FormControl>
-                <Input type="text" className="shad-input" {...field}/>
-              </FormControl>
-              <FormMessage className="shad-form_message" />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="projectContent"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="shad-form_label">Project Content</FormLabel>
+              <FormLabel className="shad-form_label">Caption</FormLabel>
               <FormControl>
                 <Textarea className="shad-textarea custom-scrollbar" {...field} />
               </FormControl>
@@ -56,11 +83,11 @@ const PostForm = () => {
           name="file"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="shad-form_label">Add Media</FormLabel>
+              <FormLabel className="shad-form_label">Add Photos</FormLabel>
               <FormControl>
                 <FileUploader
                     fieldChange={field.onChange}
-                    mediaUrl=""
+                    mediaUrl={post?.imageUrl }
                 />
               </FormControl>
               <FormMessage className="shad-form_message" />
@@ -69,12 +96,25 @@ const PostForm = () => {
         />
         <FormField
           control={form.control}
-          name="scope"
+          name="location"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="shad-form_label">Select Visibility</FormLabel>
+              <FormLabel className="shad-form_label">Add Location</FormLabel>
               <FormControl>
                 <Input type="text" className="shad-input" {...field}/>
+              </FormControl>
+              <FormMessage className="shad-form_message" />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="tags"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="shad-form_label">Add Tags(separated by comma ",")</FormLabel>
+              <FormControl>
+                <Input type="text" className="shad-input" placeholder="Art, Expression, Learn" {...field} />
               </FormControl>
               <FormMessage className="shad-form_message" />
             </FormItem>
@@ -85,8 +125,10 @@ const PostForm = () => {
             <Button 
               type="submit" 
               className="shad-button_primary whitespace-nowrap"
+              disabled={isLoadingCreate || isLoadingUpdate}
             >
-              Publish
+              {isLoadingCreate || isLoadingUpdate && 'Loading...'}
+              {action} Post
             </Button>
         </div>
         

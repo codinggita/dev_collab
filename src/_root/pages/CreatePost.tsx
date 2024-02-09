@@ -1,6 +1,6 @@
 import PostForm from "@/components/forms/PostForm"
 
-const CreateProject = () => {
+const CreatePost = () => {
   return (
     <div className="flex flex-1">
       <div className="common-container">
@@ -11,13 +11,14 @@ const CreateProject = () => {
             width={36}
             alt="add-post"
           />
-          <h2 className="h3-bold md:h2-bold text-left w-full">Publish Project</h2>
+          <h2 className="h3-bold md:h2-bold text-left w-full">Create Post</h2>
         </div>
-        <PostForm/>
+        <PostForm action="Create"/>
+
       </div>
       
     </div>
   )
 }
 
-export default CreateProject;
+export default CreatePost
