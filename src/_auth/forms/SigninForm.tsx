@@ -4,24 +4,51 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { SigninValidation } from "@/lib/validation"; 
 import Loader from "@/components/shared/Loader";
-import { SigninValidation } from "@/lib/validation";
+import { Link, useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast"
+import { useSignInAccount } from "@/lib/react-query/queriesAndMutations";
+import { useUserContext } from "@/context/AuthContext";
+
 
 const SigninForm = () => {
-  const isUserLoading = false;
-  // Defining the form
-  const form = useForm<z.infer<typeof SigninValidation>>({
-    resolver: zodResolver(SigninValidation),
-    defaultValues: {
-      email: "",
-      password: ""
-    },
-  })
-  // Defining the submit handler
-  async function onSubmit(values: z.infer<typeof SigninValidation>) {
-    console.log(values)
-    //return toast({title: "Login failed. Please try again."});
+    const { toast } = useToast()
+    const { checkAuthUser, isLoading: isUserLoading} = useUserContext();
+    const navigate = useNavigate();
+
+    // For Sign-In 
+    const {mutateAsync: signInAccount} = useSignInAccount();
+    // 1. Define your form.
+    const form = useForm<z.infer<typeof SigninValidation>>({
+        resolver: zodResolver(SigninValidation),
+        defaultValues: {
+          email: '',
+          password: ''
+        },
+    })
+  
+    // 2. Define a submit handler.
+    async function onSubmit(values: z.infer<typeof SigninValidation>) {
+        // Upon successfull sign-in we have to create session for the new user.
+        const session = await signInAccount({
+          email: values.email,
+          password: values.password,
+        });
+        if(!session){
+          return toast({title: "Sign in failed. Please try again."});
+        }
+
+        // After we have successfull sign in then we have to store that session in our react context
+        // At all time we had to know that we have a logged-in user
+        const isLoggedIn = await checkAuthUser();
+        if(isLoggedIn){
+          form.reset();
+          navigate('/');
+        } else {
+          console.log("Reached");
+          return toast({title: "Login failed. Please try again."});
+        }
   }
 
 
@@ -70,7 +97,7 @@ const SigninForm = () => {
           </Button>
           <p className="text-small-regular text-light-2 text-center mt-2">
             Don't have an account?
-            <Link to="/sign-up" className="text-blue-900 text-small-semibold ml-1">Sign up</Link>
+            <Link to="/sign-up" className="text-primary-500 text-small-semibold ml-1">Sign up</Link>
           </p>
         </form>
       </div>

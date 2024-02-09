@@ -8,6 +8,7 @@ import './globals.css';
 import Saved from './_root/pages/Saved';
 import AllUsers from './_root/pages/AllUsers';
 import CreateProject from './_root/pages/CreateProject';
+import { Toaster } from './components/ui/toaster';
 
 const App = () => {
   return (
@@ -27,6 +28,7 @@ const App = () => {
                 <Route path="/create-project" element={<CreateProject />} />
             </Route>            
         </Routes>
+        <Toaster/>
     </main>
   )
 }

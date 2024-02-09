@@ -1,40 +1,75 @@
-import  { z } from "zod";
+import  { z }from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { SignupValidation } from "@/lib/validation"; 
 import Loader from "@/components/shared/Loader";
-import { SignupValidation } from "@/lib/validation";
+import { Link, useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast"
+import { useCreateUserAccount, useSignInAccount } from "@/lib/react-query/queriesAndMutations";
+import { useUserContext } from "@/context/AuthContext";
 
-const SigninForm = () => {
-  const isUserLoading = false;
-  // Defining the form
-  const form = useForm<z.infer<typeof SignupValidation>>({
-    resolver: zodResolver(SignupValidation),
-    defaultValues: {
-      name: "",
-      username: "",
-      email: "",
-      password: ""
-    },
-  })
-  // Defining the submit handler
-  async function onSubmit(values: z.infer<typeof SignupValidation>) {
-    console.log(values)
-    //return toast({title: "Login failed. Please try again."});
+
+const SignupForm = () => {
+    const { toast } = useToast();
+    const { checkAuthUser, isLoading: isUserLoading} = useUserContext();
+    const navigate = useNavigate();
+    // mutateAsync is the actual function that we are calling from queriesAndMutations i.e. createUserAccount()
+    // we are calling them as a Hook
+    // we are just renaming mutateAsync to createUserAccount
+    const {mutateAsync: createUserAccount, isPending: isCreatingAccount} = useCreateUserAccount();
+
+    // For Sign-In 
+    const {mutateAsync: signInAccount, isPending: isSigningInUser} = useSignInAccount();
+  
+
+    // 1. Define your form.
+    const form = useForm<z.infer<typeof SignupValidation>>({
+        resolver: zodResolver(SignupValidation),
+        defaultValues: {
+          name: '',
+          username: '',
+          email: '',
+          password: ''
+        },
+    })
+  
+    // 2. Define a submit handler.
+    async function onSubmit(values: z.infer<typeof SignupValidation>) {
+        // Create a new user
+        const newUser = await createUserAccount(values);
+        if(!newUser){
+          return toast({title: "Sign up failed. Please try again."});
+        }
+        // Upon successfull sign-up we have to create session for the new user.
+        const session = await signInAccount({
+          email: values.email,
+          password: values.password,
+        });
+        if(!session){
+          return toast({title: "Sign in failed. Please try again."});
+        }
+
+        // After we have successfull sign in then we have to store that session in our react context
+        // At all time we had to know that we have a logged-in user
+        const isLoggedIn = await checkAuthUser();
+        if(isLoggedIn){
+          form.reset();
+          navigate('/');
+        } else {
+          return toast({title: "Login failed. Please try again."});
+        }
   }
 
 
   return (
     <Form {...form}>
       <div className="sm:w-420 flex-center flex-col">
-        <img src="/assets/images/logon.png" alt="logo" height={50} width={75}/>
+        <img src="/assets/images/logo.svg" alt="logo" />
         <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12">Create a new account</h2>
-        <p className="text-light-3 small-medium md:base-regular">
-        To use DevCollab, please enter your details
-        </p>
+        <p className="text-light-3 small-medium md:base-regular">To use Snapgram, please enter your details</p>
       
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 w-full mt-4">
           <FormField
@@ -90,7 +125,7 @@ const SigninForm = () => {
             )}
           />
           <Button type="submit" className="shad-button_primary">
-            { isUserLoading ? (
+            {isCreatingAccount || isSigningInUser || isUserLoading ? (
               <div className="flex-center gap-2">
                 <Loader/>Loading.....
               </div>
@@ -98,7 +133,8 @@ const SigninForm = () => {
           </Button>
           <p className="text-small-regular text-light-2 text-center mt-2">
             Already have an account?
-            <Link to="/sign-in" className="text-blue-900 text-small-semibold ml-1">Sign in</Link>
+            <Link to="/sign-in" className="text-primary-500 text-small-semibold ml-1">Log in</Link>
+
           </p>
         </form>
       </div>
@@ -106,4 +142,4 @@ const SigninForm = () => {
   )
 }
 
-export default SigninForm;
+export default SignupForm
