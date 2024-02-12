@@ -1,30 +1,36 @@
-# React + TypeScript + Vite
+# DevCollab
+DevCollab is a web application designed to facilitate collaboration among users on a single project. It allows users to perform CRUD (Create, Read, Update, Delete) operations seamlessly. This README file serves as a guide to understanding the application's features, technologies used, and how to set it up.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Features
+Collaboration: Multiple users can work on the same project simultaneously.
+CRUD Operations: Users can create, read, update, and delete project data.
+Real-time Updates: Changes made by one user are immediately visible to others.
+User-friendly Interface: Intuitive UI design for easy navigation and interaction.
+Technologies Used
+Typescript: For writing type-safe JavaScript code.
+Vite.js with React: Vite.js for fast development and React for building user interfaces.
+Tanstack: Tanstack tools and libraries for enhanced development experience.
+shadcn/ui: UI components for a sleek and modern interface design.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# Usage
+Once the application is running, users can:
 
-## Expanding the ESLint configuration
+# Create a new project or select an existing one.
+Collaborate with other users by adding, editing, or deleting project data.
+View real-time updates made by other users.
+Contributing
+Contributions are welcome! If you'd like to contribute to DevCollab, please follow these steps:
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+# Fork the repository.
+Create a new branch for your feature or bug fix: git checkout -b feature-name.
+Make your changes and commit them: git commit -m 'Add new feature'.
+Push to the branch: git push origin feature-name.
+Submit a pull request with a detailed explanation of your changes.
+License
+This project is licensed under the MIT License.
 
-- Configure the top-level `parserOptions` property like this:
+# Contact
+For questions or support, feel free to contact the project maintainer at mohammadtauseef284@gmail.com.
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Feel free to customize this README file further based on your specific requirements and preferences.
